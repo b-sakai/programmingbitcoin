@@ -25,11 +25,15 @@ class BloomFilter:
     def add(self, item):
         '''Add an item to the filter'''
         # iterate self.function_count number of times
+        for i in range(self.function_count):
             # BIP0037 spec seed is i*BIP37_CONSTANT + self.tweak
+            seed = i * BIP37_CONSTANT + self.tweak
             # get the murmur3 hash given that seed
+            h = murmur3(item, seed=seed)
             # set the bit at the hash mod the bitfield size (self.size*8)
+            bit = h % (self.size * 8)
             # set the bit field at bit to be 1
-        raise NotImplementedError
+            self.bit_field[bit] = 1
 
     def filter_bytes(self):
         return bit_field_to_bytes(self.bit_field)
@@ -37,13 +41,19 @@ class BloomFilter:
     def filterload(self, flag=1):
         '''Return the filterload message'''
         # start the payload with the size of the filter in bytes
+        payload = encode_varint(self.size)
         # next add the bit field using self.filter_bytes()
+        payload += self.filter_bytes()
         # function count is 4 bytes little endian
+        payload += int_to_little_endian(self.function_count, 4)
         # tweak is 4 bytes little endian
+        payload += int_to_little_endian(self.tweak, 4)
         # flag is 1 byte little endian
+        payload += int_to_little_endian(flag, 1)
         # return a GenericMessage whose command is b'filterload'
         # and payload is what we've calculated
-        raise NotImplementedError
+        return GenericMessage(b'fillterload', payload)
+
 
 
 class BloomFilterTest(TestCase):
