@@ -1,3 +1,5 @@
+演習問題管理リポジトリ。全部やっていない。
+
 #[Programming Bitcoin](https://learning.oreilly.com/library/view/programming-bitcoin/9781492031482/)
 
 ###BY[ JIMMY SONG](https://github.com/jimmysong)
